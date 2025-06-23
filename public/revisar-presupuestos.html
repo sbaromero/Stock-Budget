@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisar Presupuestos - Sistema de Presupuestos y Stock</title>
+    
+    <!-- Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- jsPDF para exportar PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="index.html" class="mdc-icon-button material-icons" style="color: white; text-decoration: none;">arrow_back</a>
+                <span class="mdc-top-app-bar__title">Revisar Presupuestos</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <i class="material-icons" style="color: white;">history</i>
+            </section>
+        </div>
+    </div>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="container">
+            <!-- Filtros y búsqueda -->
+            <div class="form-container fade-in">
+                <h3 class="mdc-typography--headline6">Filtrar Presupuestos</h3>
+                <div class="form-grid">
+                    <div class="mdc-form-field">
+                        <label for="filtroCliente">Filtrar por Cliente</label>
+                        <select id="filtroCliente" class="mdc-select" onchange="filterBudgets()">
+                            <option value="">Todos los clientes</option>
+                        </select>
+                    </div>
+                    <div class="mdc-form-field">
+                        <label for="filtroEstado">Filtrar por Estado</label>
+                        <select id="filtroEstado" class="mdc-select" onchange="filterBudgets()">
+                            <option value="">Todos los estados</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Aprobado">Aprobado</option>
+                            <option value="Rechazado">Rechazado</option>
+                        </select>
+                    </div>
+                    <div class="mdc-form-field">
+                        <label for="buscarPresupuesto">Buscar por número</label>
+                        <input type="number" id="buscarPresupuesto" class="mdc-text-field" placeholder="Número de presupuesto" onkeyup="filterBudgets()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="stats-section fade-in">
+                <div class="mdc-card stat-card">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Total Presupuestos</h4>
+                        <span class="stat-number" id="totalPresupuestosCount">0</span>
+                    </div>
+                </div>
+                <div class="mdc-card stat-card success">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Valor Total</h4>
+                        <span class="stat-number" id="valorTotalPresupuestos">$0.00</span>
+                    </div>
+                </div>
+                <div class="mdc-card stat-card warning">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Promedio</h4>
+                        <span class="stat-number" id="promedioPresupuestos">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de presupuestos -->
+            <div class="table-container fade-in">
+                <div class="productos-header">
+                    <h3>Historial de Presupuestos</h3>
+                    <button class="mdc-button mdc-button--outlined" onclick="refreshBudgets()">
+                        <i class="material-icons" style="margin-right: 8px;">refresh</i>
+                        <span class="mdc-button__label">Actualizar</span>
+                    </button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Cliente</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="presupuestosTableBody">
+                        <!-- Los presupuestos se cargan dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Navegación rápida -->
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="presupuestos.html" class="mdc-button mdc-button--raised" style="margin-right: 16px;">
+                    <i class="material-icons" style="margin-right: 8px;">add</i>
+                    <span class="mdc-button__label">Crear Nuevo Presupuesto</span>
+                </a>
+                <a href="productos.html" class="mdc-button mdc-button--outlined" style="margin-right: 16px;">
+                    <i class="material-icons" style="margin-right: 8px;">inventory_2</i>
+                    <span class="mdc-button__label">Gestionar Productos</span>
+                </a>
+                <a href="clientes.html" class="mdc-button mdc-button--outlined">
+                    <i class="material-icons" style="margin-right: 8px;">people</i>
+                    <span class="mdc-button__label">Gestionar Clientes</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para ver detalles del presupuesto -->
+    <div class="modal-overlay" id="detalleModal">
+        <div class="mdc-card modal-card" style="max-width: 800px; width: 95%;">
+            <div class="modal-header">
+                <h3 class="mdc-typography--headline6" id="detalleModalTitle">Detalle del Presupuesto</h3>
+                <button class="mdc-icon-button material-icons" onclick="closeDetalleModal()">close</button>
+            </div>
+            <div class="modal-content" id="detalleModalContent">
+                <!-- El contenido se carga dinámicamente -->
+            </div>
+            <div class="modal-actions">
+                <button class="mdc-button mdc-button--outlined" onclick="closeDetalleModal()">
+                    <span class="mdc-button__label">Cerrar</span>
+                </button>
+                <button class="mdc-button mdc-button--raised" id="exportarDetalleBtn">
+                    <i class="material-icons" style="margin-right: 8px;">picture_as_pdf</i>
+                    <span class="mdc-button__label">Exportar PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="mdc-card modal-card" style="max-width: 500px; width: 95%;">
+            <div class="modal-header">
+                <h3 class="mdc-typography--headline6">
+                    <i class="material-icons" style="color: #f44336; margin-right: 8px;">warning</i>
+                    Confirmar Eliminación
+                </h3>
+                <button class="mdc-icon-button material-icons" onclick="closeDeleteModal()">close</button>
+            </div>
+            <div class="modal-content" id="deleteModalContent">
+                <div style="padding: 16px; text-align: center;">
+                    <i class="material-icons" style="font-size: 48px; color: #f44336; margin-bottom: 16px;">delete_forever</i>
+                    <p class="mdc-typography--body1" style="margin-bottom: 8px;">
+                        ¿Estás seguro de que deseas eliminar este presupuesto?
+                    </p>
+                    <p class="mdc-typography--body2" style="color: #757575;" id="deleteModalDetails">
+                        <!-- Los detalles se cargan dinámicamente -->
+                    </p>
+                    <div style="background-color: #ffebee; padding: 12px; border-radius: 8px; margin-top: 16px;">
+                        <p class="mdc-typography--caption" style="color: #c62828; margin: 0;">
+                            <i class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 4px;">info</i>
+                            Esta acción no se puede deshacer
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="mdc-button mdc-button--outlined" onclick="closeDeleteModal()">
+                    <span class="mdc-button__label">Cancelar</span>
+                </button>
+                <button class="mdc-button error" id="confirmDeleteBtn">
+                    <i class="material-icons" style="margin-right: 8px;">delete</i>
+                    <span class="mdc-button__label">Eliminar Presupuesto</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let allBudgets = [];
+        let filteredBudgets = [];
+        let currentDetailBudget = null;
+        let budgetToDelete = null;
+
+        // Cargar presupuestos al iniciar
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadBudgets();
+            await loadClientFilters();
+        });
+
+        async function loadBudgets() {
+            try {
+                allBudgets = await BudgetAPI.getAll();
+                filteredBudgets = [...allBudgets];
+                renderBudgets();
+                updateStats();
+            } catch (error) {
+                showSnackbar('Error cargando presupuestos', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadClientFilters() {
+            try {
+                const clientes = await ClientAPI.getAll();
+                const select = document.getElementById('filtroCliente');
+                
+                // Limpiar opciones existentes excepto "Todos"
+                select.innerHTML = '<option value="">Todos los clientes</option>';
+                
+                clientes.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.nombre;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando clientes para filtros:', error);
+            }
+        }
+
+        function renderBudgets() {
+            const tbody = document.getElementById('presupuestosTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredBudgets.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 32px; color: #757575;">
+                        <i class="material-icons" style="font-size: 48px; margin-bottom: 16px; display: block;">inbox</i>
+                        No se encontraron presupuestos
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+
+            filteredBudgets.sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
+
+            filteredBudgets.forEach(budget => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                const fecha = new Date(budget.fechaCreacion).toLocaleDateString('es-AR');
+                const estadoClass = getEstadoClass(budget.estado);
+                
+                row.innerHTML = `
+                    <td><strong>#${budget.numero}</strong></td>
+                    <td>${budget.cliente.nombre}</td>
+                    <td>${fecha}</td>
+                    <td><strong>${formatCurrency(budget.total)}</strong></td>
+                    <td><span class="badge ${estadoClass}">${budget.estado}</span></td>
+                    <td class="actions">
+                        <button class="mdc-button mdc-button--outlined btn-small" onclick="viewBudgetDetail('${budget.id}')">
+                            <i class="material-icons" style="margin-right: 4px;">visibility</i>
+                            <span class="mdc-button__label">Ver</span>
+                        </button>
+                        <button class="mdc-button mdc-button--raised btn-small" onclick="exportBudgetPDF('${budget.id}')">
+                            <i class="material-icons" style="margin-right: 4px;">picture_as_pdf</i>
+                            <span class="mdc-button__label">PDF</span>
+                        </button>
+                        <button class="mdc-button warning btn-small" onclick="updateBudgetStatus('${budget.id}')">
+                            <i class="material-icons" style="margin-right: 4px;">edit</i>
+                            <span class="mdc-button__label">Estado</span>
+                        </button>
+                        <button class="mdc-button error btn-small" onclick="deleteBudget('${budget.id}', '${budget.numero}', '${budget.cliente.nombre}')">
+                            <i class="material-icons" style="margin-right: 4px;">delete</i>
+                            <span class="mdc-button__label">Eliminar</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getEstadoClass(estado) {
+            switch(estado) {
+                case 'Aprobado': return 'success';
+                case 'Rechazado': return 'error';
+                case 'Pendiente': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function updateStats() {
+            const total = filteredBudgets.length;
+            const valorTotal = filteredBudgets.reduce((sum, budget) => sum + budget.total, 0);
+            const promedio = total > 0 ? valorTotal / total : 0;
+
+            document.getElementById('totalPresupuestosCount').textContent = total;
+            document.getElementById('valorTotalPresupuestos').textContent = formatCurrency(valorTotal);
+            document.getElementById('promedioPresupuestos').textContent = formatCurrency(promedio);
+        }
+
+        function filterBudgets() {
+            const clienteFilter = document.getElementById('filtroCliente').value;
+            const estadoFilter = document.getElementById('filtroEstado').value;
+            const numeroFilter = document.getElementById('buscarPresupuesto').value;
+
+            filteredBudgets = allBudgets.filter(budget => {
+                const matchCliente = !clienteFilter || budget.cliente.id === clienteFilter;
+                const matchEstado = !estadoFilter || budget.estado === estadoFilter;
+                const matchNumero = !numeroFilter || budget.numero.toString().includes(numeroFilter);
+                
+                return matchCliente && matchEstado && matchNumero;
+            });
+
+            renderBudgets();
+            updateStats();
+        }
+
+        async function viewBudgetDetail(budgetId) {
+            const budget = allBudgets.find(b => b.id === budgetId);
+            if (!budget) return;
+
+            currentDetailBudget = budget;
+            
+            const modal = document.getElementById('detalleModal');
+            const title = document.getElementById('detalleModalTitle');
+            const content = document.getElementById('detalleModalContent');
+            
+            title.textContent = `Presupuesto #${budget.numero}`;
+            
+            const fecha = new Date(budget.fechaCreacion).toLocaleDateString('es-AR');
+            
+            content.innerHTML = `
+                <div class="presupuesto-detalle">
+                    <div class="cliente-section">
+                        <h4 class="mdc-typography--headline6">Información del Cliente</h4>
+                        <div class="cliente-info-detail">
+                            <p><strong>Nombre:</strong> ${budget.cliente.nombre}</p>
+                            <p><strong>Email:</strong> ${budget.cliente.email}</p>
+                            <p><strong>Teléfono:</strong> ${budget.cliente.telefono}</p>
+                            ${budget.cliente.direccion ? `<p><strong>Dirección:</strong> ${budget.cliente.direccion}</p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="presupuesto-info">
+                        <h4 class="mdc-typography--headline6">Información del Presupuesto</h4>
+                        <div class="presupuesto-info-detail">
+                            <p><strong>Número:</strong> #${budget.numero}</p>
+                            <p><strong>Fecha:</strong> ${fecha}</p>
+                            <p><strong>Estado:</strong> <span class="badge ${getEstadoClass(budget.estado)}">${budget.estado}</span></p>
+                            <p><strong>Total:</strong> <span style="font-size: 1.2em; color: #1976d2;">${formatCurrency(budget.total)}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="productos-section">
+                        <h4 class="mdc-typography--headline6">Productos</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Marca</th>
+                                        <th>Precio Unit.</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${budget.productos.map(producto => `
+                                        <tr>
+                                            <td>${producto.nombre}</td>
+                                            <td>${producto.marca}</td>
+                                            <td>${formatCurrency(producto.precio)}</td>
+                                            <td>${producto.cantidad}</td>
+                                            <td><strong>${formatCurrency(producto.precio * producto.cantidad)}</strong></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Configurar botón de exportar
+            document.getElementById('exportarDetalleBtn').onclick = () => exportBudgetPDF(budgetId);
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeDetalleModal() {
+            document.getElementById('detalleModal').style.display = 'none';
+            currentDetailBudget = null;
+        }
+
+        async function exportBudgetPDF(budgetId) {
+            const budget = allBudgets.find(b => b.id === budgetId);
+            if (!budget) {
+                showSnackbar('Presupuesto no encontrado', 'error');
+                return;
+            }
+
+            try {
+                await generatePDF(budget);
+                showSnackbar('PDF exportado correctamente', 'success');
+                closeDetalleModal();
+            } catch (error) {
+                showSnackbar('Error al exportar PDF', 'error');
+                console.error('Error exportando PDF:', error);
+            }
+        }
+
+        async function updateBudgetStatus(budgetId) {
+            const budget = allBudgets.find(b => b.id === budgetId);
+            if (!budget) return;
+
+            const newStatus = prompt(`Estado actual: ${budget.estado}\n\nNuevo estado (Pendiente/Aprobado/Rechazado):`, budget.estado);
+            
+            if (newStatus && ['Pendiente', 'Aprobado', 'Rechazado'].includes(newStatus)) {
+                try {
+                    const response = await fetch(`/api/presupuestos/${budgetId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ estado: newStatus })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Actualizar el estado local y renderizar
+                        budget.estado = newStatus;
+                        renderBudgets();
+                        showSnackbar(`Estado actualizado a: ${newStatus}`, 'success');
+                    } else {
+                        showSnackbar('Error al actualizar estado: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    showSnackbar('Error al actualizar estado', 'error');
+                    console.error('Error:', error);
+                }
+            } else if (newStatus !== null) {
+                showSnackbar('Estado inválido. Use: Pendiente, Aprobado o Rechazado', 'error');
+            }
+        }
+
+        async function refreshBudgets() {
+            showSnackbar('Actualizando presupuestos...', 'info');
+            await loadBudgets();
+            showSnackbar('Presupuestos actualizados', 'success');
+        }
+
+        function deleteBudget(budgetId, budgetNumber, clientName) {
+            const budget = allBudgets.find(b => b.id === budgetId);
+            if (!budget) return;
+
+            budgetToDelete = budget;
+            
+            // Mostrar detalles en el modal
+            document.getElementById('deleteModalDetails').innerHTML = `
+                <strong>Presupuesto #${budgetNumber}</strong><br>
+                Cliente: ${clientName}<br>
+                Total: ${formatCurrency(budget.total)}
+            `;
+            
+            // Configurar botón de confirmación
+            document.getElementById('confirmDeleteBtn').onclick = () => confirmDelete();
+            
+            // Mostrar modal
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            budgetToDelete = null;
+        }
+
+        async function confirmDelete() {
+            if (!budgetToDelete) return;
+
+            try {
+                // Mostrar estado de carga
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="material-icons" style="margin-right: 8px;">hourglass_empty</i><span class="mdc-button__label">Eliminando...</span>';
+                confirmBtn.disabled = true;
+
+                const result = await BudgetAPI.delete(budgetToDelete.id);
+                
+                if (result.success) {
+                    // Remover del array local
+                    allBudgets = allBudgets.filter(b => b.id !== budgetToDelete.id);
+                    filterBudgets(); // Aplicar filtros actuales
+                    updateStats();
+                    
+                    showSnackbar(result.message || 'Presupuesto eliminado correctamente', 'success');
+                    closeDeleteModal();
+                } else {
+                    showSnackbar('Error al eliminar presupuesto: ' + result.error, 'error');
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            } catch (error) {
+                showSnackbar('Error al eliminar presupuesto', 'error');
+                console.error('Error:', error);
+                
+                // Restaurar botón
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                confirmBtn.innerHTML = '<i class="material-icons" style="margin-right: 8px;">delete</i><span class="mdc-button__label">Eliminar Presupuesto</span>';
+                confirmBtn.disabled = false;
+            }
+        }
+
+        // Exportar funciones globales
+        window.viewBudgetDetail = viewBudgetDetail;
+        window.closeDetalleModal = closeDetalleModal;
+        window.exportBudgetPDF = exportBudgetPDF;
+        window.updateBudgetStatus = updateBudgetStatus;
+        window.refreshBudgets = refreshBudgets;
+        window.filterBudgets = filterBudgets;
+        window.deleteBudget = deleteBudget;
+        window.closeDeleteModal = closeDeleteModal;
+        window.confirmDelete = confirmDelete;
+    </script>
+</body>
+</html> 

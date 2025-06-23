@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Presupuestos y Stock</title>
+    
+    <!-- Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- jsPDF para exportar PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <span class="mdc-top-app-bar__title">Sistema de Presupuestos y Stock</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <button class="mdc-icon-button material-icons" onclick="showConfigModal()">settings</button>
+            </section>
+        </div>
+    </div>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="container">
+            <div class="hero-section">
+                <h1 class="mdc-typography--headline3">Bienvenido al Sistema</h1>
+                <p class="mdc-typography--body1">Gestiona tus productos, clientes y presupuestos de forma eficiente</p>
+            </div>
+
+            <div class="navigation-cards">
+                <div class="mdc-card nav-card" onclick="window.location.href='productos.html'">
+                    <div class="mdc-card__primary-action">
+                        <div class="card-content">
+                            <i class="material-icons card-icon">inventory_2</i>
+                            <h3 class="mdc-typography--headline6">Productos</h3>
+                            <p class="mdc-typography--body2">Gestionar inventario y stock</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mdc-card nav-card" onclick="window.location.href='clientes.html'">
+                    <div class="mdc-card__primary-action">
+                        <div class="card-content">
+                            <i class="material-icons card-icon">people</i>
+                            <h3 class="mdc-typography--headline6">Clientes</h3>
+                            <p class="mdc-typography--body2">Administrar base de clientes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mdc-card nav-card" onclick="window.location.href='presupuestos.html'">
+                    <div class="mdc-card__primary-action">
+                        <div class="card-content">
+                            <i class="material-icons card-icon">description</i>
+                            <h3 class="mdc-typography--headline6">Presupuestos</h3>
+                            <p class="mdc-typography--body2">Crear y gestionar presupuestos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mdc-card nav-card" onclick="window.location.href='revisar-presupuestos.html'">
+                    <div class="mdc-card__primary-action">
+                        <div class="card-content">
+                            <i class="material-icons card-icon">history</i>
+                            <h3 class="mdc-typography--headline6">Revisar Presupuestos</h3>
+                            <p class="mdc-typography--body2">Ver historial y detalles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="mdc-card stat-card">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Total Productos</h4>
+                        <span class="stat-number" id="totalProductos">0</span>
+                    </div>
+                </div>
+                <div class="mdc-card stat-card">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Total Clientes</h4>
+                        <span class="stat-number" id="totalClientes">0</span>
+                    </div>
+                </div>
+                <div class="mdc-card stat-card">
+                    <div class="card-content">
+                        <h4 class="mdc-typography--headline6">Presupuestos</h4>
+                        <span class="stat-number" id="totalPresupuestos">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de configuración -->
+    <div class="modal-overlay" id="configModal">
+        <div class="mdc-card modal-card">
+            <div class="modal-header">
+                <h3 class="mdc-typography--headline6">Configuración de Empresa</h3>
+                <button class="mdc-icon-button material-icons" onclick="closeConfigModal()">close</button>
+            </div>
+            <div class="modal-content">
+                <div class="mdc-form-field">
+                    <label class="mdc-typography--body1">Logo de la Empresa</label>
+                    <input type="file" id="logoInput" accept="image/*" class="file-input">
+                    <button class="mdc-button mdc-button--raised" onclick="document.getElementById('logoInput').click()">
+                        <span class="mdc-button__label">Seleccionar Logo</span>
+                    </button>
+                </div>
+                
+                <div class="logo-preview" id="logoPreview" style="display: none;">
+                    <img id="logoImage" alt="Logo de la empresa" style="max-width: 200px; max-height: 100px;">
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="mdc-button mdc-button--outlined" onclick="closeConfigModal()">
+                        <span class="mdc-button__label">Cancelar</span>
+                    </button>
+                    <button class="mdc-button mdc-button--raised" onclick="uploadLogo()">
+                        <span class="mdc-button__label">Guardar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Cargar estadísticas al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            loadCurrentLogo();
+        });
+
+        async function updateStats() {
+            try {
+                const stats = await apiCall('/api/stats');
+                document.getElementById('totalProductos').textContent = stats.totalProductos;
+                document.getElementById('totalClientes').textContent = stats.totalClientes;
+                document.getElementById('totalPresupuestos').textContent = stats.totalPresupuestos;
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        function showConfigModal() {
+            document.getElementById('configModal').style.display = 'flex';
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        async function loadCurrentLogo() {
+            try {
+                const response = await fetch('/api/logo');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('logoImage').src = data.path;
+                    document.getElementById('logoPreview').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error cargando logo:', error);
+            }
+        }
+
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('logoImage').src = e.target.result;
+                    document.getElementById('logoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function uploadLogo() {
+            const fileInput = document.getElementById('logoInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showSnackbar('Por favor selecciona un archivo');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('logo', file);
+
+            try {
+                const response = await fetch('/api/upload-logo', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showSnackbar('Logo guardado correctamente');
+                    closeConfigModal();
+                } else {
+                    showSnackbar('Error al guardar el logo: ' + result.error);
+                }
+            } catch (error) {
+                showSnackbar('Error al subir el logo');
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

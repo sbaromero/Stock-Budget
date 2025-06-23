@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Sistema de Presupuestos y Stock</title>
+    
+    <!-- Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="index.html" class="mdc-icon-button material-icons" style="color: white; text-decoration: none;">arrow_back</a>
+                <span class="mdc-top-app-bar__title">Gestión de Clientes</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <i class="material-icons" style="color: white;">people</i>
+            </section>
+        </div>
+    </div>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="container">
+            <!-- Formulario para agregar clientes -->
+            <div class="form-container fade-in">
+                <h3 class="mdc-typography--headline6">Agregar Nuevo Cliente</h3>
+                <form id="clientForm" onsubmit="event.preventDefault(); addClient();">
+                    <div class="form-grid">
+                        <div class="mdc-form-field">
+                            <label for="nombre">Nombre Completo *</label>
+                            <input type="text" id="nombre" name="nombre" class="mdc-text-field" required>
+                        </div>
+                        
+                        <div class="mdc-form-field">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" class="mdc-text-field" required>
+                        </div>
+                        
+                        <div class="mdc-form-field">
+                            <label for="telefono">Teléfono *</label>
+                            <input type="tel" id="telefono" name="telefono" class="mdc-text-field" required>
+                        </div>
+                        
+                        <div class="mdc-form-field">
+                            <label for="direccion">Dirección</label>
+                            <input type="text" id="direccion" name="direccion" class="mdc-text-field" placeholder="Dirección completa">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="mdc-button mdc-button--raised">
+                        <i class="material-icons" style="margin-right: 8px;">person_add</i>
+                        <span class="mdc-button__label">Agregar Cliente</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de clientes -->
+            <div class="table-container fade-in">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTableBody">
+                        <!-- Los clientes se cargan dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Navegación rápida -->
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="productos.html" class="mdc-button mdc-button--outlined" style="margin-right: 16px;">
+                    <i class="material-icons" style="margin-right: 8px;">inventory_2</i>
+                    <span class="mdc-button__label">Gestionar Productos</span>
+                </a>
+                <a href="presupuestos.html" class="mdc-button mdc-button--raised success">
+                    <i class="material-icons" style="margin-right: 8px;">description</i>
+                    <span class="mdc-button__label">Crear Presupuesto</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

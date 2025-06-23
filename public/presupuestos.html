@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Presupuesto - Sistema de Presupuestos y Stock</title>
+    
+    <!-- Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- jsPDF para exportar PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="index.html" class="mdc-icon-button material-icons" style="color: white; text-decoration: none;">arrow_back</a>
+                <span class="mdc-top-app-bar__title">Crear Presupuesto</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <i class="material-icons" style="color: white;">description</i>
+            </section>
+        </div>
+    </div>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="container">
+            <!-- Información del cliente -->
+            <div class="presupuesto-header fade-in">
+                <h3 class="mdc-typography--headline6">Información del Cliente</h3>
+                <div class="cliente-info">
+                    <div class="mdc-form-field">
+                        <label for="clienteSelect">Seleccionar Cliente *</label>
+                        <select id="clienteSelect" class="mdc-select" required>
+                            <option value="">Seleccionar cliente</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 16px; align-items: end;">
+                        <a href="clientes.html" class="mdc-button mdc-button--outlined">
+                            <i class="material-icons" style="margin-right: 8px;">person_add</i>
+                            <span class="mdc-button__label">Agregar Cliente</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de productos -->
+            <div class="productos-section fade-in">
+                <div class="productos-header">
+                    <h3>Productos del Presupuesto</h3>
+                    <div class="total-section">
+                        <h4>Total: <span id="presupuestoTotal">$0.00</span></h4>
+                    </div>
+                </div>
+
+                <!-- Formulario para agregar productos -->
+                <div class="producto-form">
+                    <h4 class="mdc-typography--headline6">Agregar Producto</h4>
+                    <div class="form-grid">
+                        <div class="mdc-form-field">
+                            <label for="productoSelect">Seleccionar Producto</label>
+                            <select id="productoSelect" class="mdc-select">
+                                <option value="">Seleccionar producto</option>
+                            </select>
+                        </div>
+                        <div class="mdc-form-field">
+                            <label for="cantidadProducto">Cantidad</label>
+                            <input type="number" id="cantidadProducto" class="mdc-text-field" min="1" placeholder="Cantidad">
+                        </div>
+                        <div class="mdc-form-field" style="display: flex; align-items: end;">
+                            <button type="button" class="mdc-button mdc-button--raised" onclick="addProductToBudget()">
+                                <i class="material-icons" style="margin-right: 8px;">add_shopping_cart</i>
+                                <span class="mdc-button__label">Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <a href="productos.html" class="mdc-button mdc-button--outlined btn-small">
+                            <i class="material-icons" style="margin-right: 8px;">inventory_2</i>
+                            <span class="mdc-button__label">Gestionar Productos</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tabla de productos en el presupuesto -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="presupuestoProductsBody">
+                            <!-- Los productos se cargan dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección de total y acciones -->
+            <div class="total-section fade-in">
+                <div style="text-align: center;">
+                    <h3>Total del Presupuesto</h3>
+                    <div class="total-amount" id="presupuestoTotalFinal">$0.00</div>
+                    <div style="margin-top: 32px;">
+                        <button class="mdc-button mdc-button--raised success" onclick="saveBudget()" style="margin-right: 16px;">
+                            <i class="material-icons" style="margin-right: 8px;">save</i>
+                            <span class="mdc-button__label">Guardar Presupuesto</span>
+                        </button>
+                        <button class="mdc-button mdc-button--outlined" onclick="clearBudget()">
+                            <i class="material-icons" style="margin-right: 8px;">clear</i>
+                            <span class="mdc-button__label">Limpiar Todo</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegación rápida -->
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="productos.html" class="mdc-button mdc-button--outlined" style="margin-right: 16px;">
+                    <i class="material-icons" style="margin-right: 8px;">inventory_2</i>
+                    <span class="mdc-button__label">Gestionar Productos</span>
+                </a>
+                <a href="clientes.html" class="mdc-button mdc-button--outlined">
+                    <i class="material-icons" style="margin-right: 8px;">people</i>
+                    <span class="mdc-button__label">Gestionar Clientes</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Función para limpiar el presupuesto con confirmación
+        function clearBudget() {
+            if (confirm('¿Estás seguro de limpiar todo el presupuesto?')) {
+                currentBudgetProducts = [];
+                const clienteSelect = document.getElementById('clienteSelect');
+                if (clienteSelect) clienteSelect.value = '';
+                renderBudgetProducts();
+                updateBudgetTotal();
+                showSnackbar('Presupuesto limpiado correctamente', 'info');
+            }
+        }
+
+        // Actualizar el total también en la sección final
+        function updateBudgetTotal() {
+            const total = currentBudgetProducts.reduce((total, item) => {
+                return total + (item.precio * item.cantidad);
+            }, 0);
+            
+            const totalElement = document.getElementById('presupuestoTotal');
+            const totalFinalElement = document.getElementById('presupuestoTotalFinal');
+            
+            if (totalElement) {
+                totalElement.textContent = formatCurrency(total);
+            }
+            if (totalFinalElement) {
+                totalFinalElement.textContent = formatCurrency(total);
+            }
+        }
+    </script>
+</body>
+</html> 
