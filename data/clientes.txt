@@ -1,0 +1,29 @@
+{
+  "lastUpdated": "2025-06-23T19:13:32.987Z",
+  "data": [
+    {
+      "id": "mc9gvbz8145d8t3z8ol",
+      "nombre": "SEBASTIAN ALEJANDRO",
+      "email": "javierdarioromero@gmail.com",
+      "telefono": "1150138991",
+      "direccion": "Dorado 2150",
+      "fechaCreacion": "2025-06-23T19:05:29.444Z"
+    },
+    {
+      "id": "mc9h5g14cunjpmdhg6m",
+      "nombre": "Juan Pérez",
+      "email": "juan.perez@email.com",
+      "telefono": "1156789012",
+      "direccion": "Av. Corrientes 1234, CABA",
+      "fechaCreacion": "2025-06-23T19:13:21.256Z"
+    },
+    {
+      "id": "mc9h5p2zd8geuctt9rv",
+      "nombre": "María García",
+      "email": "maria.garcia@email.com",
+      "telefono": "1145678901",
+      "direccion": "Belgrano 567, San Isidro",
+      "fechaCreacion": "2025-06-23T19:13:32.987Z"
+    }
+  ]
+}

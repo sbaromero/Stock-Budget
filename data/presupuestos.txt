@@ -1,0 +1,28 @@
+{
+  "lastUpdated": "2025-06-23T19:18:43.450Z",
+  "data": [
+    {
+      "id": "mc9gvqsys027hkdmpkn",
+      "numero": 1,
+      "cliente": {
+        "id": "mc9gvbz8145d8t3z8ol",
+        "nombre": "SEBASTIAN ALEJANDRO",
+        "email": "javierdarioromero@gmail.com",
+        "telefono": "1150138991",
+        "direccion": "Dorado 2150"
+      },
+      "productos": [
+        {
+          "id": "mc9guq9l4qitxtgsocd",
+          "nombre": "PRODUCTO 1",
+          "marca": "HONDA",
+          "precio": 1000,
+          "cantidad": 1
+        }
+      ],
+      "total": 1000,
+      "fechaCreacion": "2025-06-23T19:05:48.658Z",
+      "estado": "Pendiente"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "lastUpdated": "2025-06-23T19:13:09.409Z",
+  "data": [
+    {
+      "id": "mc9guq9l4qitxtgsocd",
+      "nombre": "PRODUCTO 1",
+      "marca": "HONDA",
+      "precio": 1000,
+      "tamaño": "500",
+      "peso": "18",
+      "cantidad": 5999,
+      "fechaCreacion": "2025-06-23T19:05:01.305Z"
+    },
+    {
+      "id": "mc9h51ojj9vz4tg81xs",
+      "nombre": "Laptop Gaming",
+      "marca": "ASUS",
+      "precio": 85000,
+      "tamano": "15.6 pulgadas",
+      "peso": "2.5kg",
+      "cantidad": 5,
+      "fechaCreacion": "2025-06-23T19:13:02.659Z"
+    },
+    {
+      "id": "mc9h56w1zkxnx368j3",
+      "nombre": "Mouse Inalámbrico",
+      "marca": "Logitech",
+      "precio": 4500,
+      "tamano": "12cm",
+      "peso": "100g",
+      "cantidad": 15,
+      "fechaCreacion": "2025-06-23T19:13:09.409Z"
+    }
+  ]
+}
