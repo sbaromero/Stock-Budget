@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - Sistema de Presupuestos y Stock</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h2>📦 Gestión de Productos</h2>
+            <a href="index.html" class="btn-home">🏠 Inicio</a>
+        </div>
+
+        <!-- Formulario para agregar productos -->
+        <div class="form-container fade-in">
+            <h3>Agregar Nuevo Producto</h3>
+            <form id="productForm" onsubmit="event.preventDefault(); addProduct();">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Producto *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="marca">Marca *</label>
+                        <input type="text" id="marca" name="marca" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="precio">Precio *</label>
+                        <input type="number" id="precio" name="precio" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tamaño">Tamaño</label>
+                        <input type="text" id="tamaño" name="tamaño" placeholder="Ej: Mediano, 500ml, 30cm">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="peso">Peso</label>
+                        <input type="text" id="peso" name="peso" placeholder="Ej: 1kg, 500g">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad en Stock *</label>
+                        <input type="number" id="cantidad" name="cantidad" min="0" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    ➕ Agregar Producto
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista de productos -->
+        <div class="table-container fade-in">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Marca</th>
+                        <th>Precio</th>
+                        <th>Tamaño</th>
+                        <th>Peso</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productosTableBody">
+                    <!-- Los productos se cargan dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Navegación rápida -->
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="clientes.html" class="btn btn-secondary" style="margin-right: 10px;">
+                👥 Gestionar Clientes
+            </a>
+            <a href="presupuestos.html" class="btn btn-success">
+                📋 Crear Presupuesto
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

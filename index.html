@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Presupuestos y Stock</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Sistema de Presupuestos y Stock</h1>
+            <p class="subtitle">Gestiona tus productos, clientes y presupuestos de forma fácil</p>
+        </header>
+
+        <nav class="navigation">
+            <div class="nav-cards">
+                <a href="productos.html" class="nav-card">
+                    <div class="nav-icon">📦</div>
+                    <h3>Productos</h3>
+                    <p>Gestionar inventario y stock</p>
+                </a>
+                
+                <a href="clientes.html" class="nav-card">
+                    <div class="nav-icon">👥</div>
+                    <h3>Clientes</h3>
+                    <p>Administrar base de clientes</p>
+                </a>
+                
+                <a href="presupuestos.html" class="nav-card">
+                    <div class="nav-icon">📋</div>
+                    <h3>Presupuestos</h3>
+                    <p>Crear y gestionar presupuestos</p>
+                </a>
+            </div>
+        </nav>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <h4>Total Productos</h4>
+                <span id="totalProductos">0</span>
+            </div>
+            <div class="stat-card">
+                <h4>Total Clientes</h4>
+                <span id="totalClientes">0</span>
+            </div>
+            <div class="stat-card">
+                <h4>Presupuestos</h4>
+                <span id="totalPresupuestos">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Cargar estadísticas en la página principal
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+        });
+
+        function updateStats() {
+            const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+            const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            const presupuestos = JSON.parse(localStorage.getItem('presupuestos') || '[]');
+
+            document.getElementById('totalProductos').textContent = productos.length;
+            document.getElementById('totalClientes').textContent = clientes.length;
+            document.getElementById('totalPresupuestos').textContent = presupuestos.length;
+        }
+    </script>
+</body>
+</html> 

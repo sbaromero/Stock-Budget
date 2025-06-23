@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Presupuesto - Sistema de Presupuestos y Stock</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 Crear Presupuesto</h2>
+            <a href="index.html" class="btn-home">🏠 Inicio</a>
+        </div>
+
+        <!-- Información del cliente -->
+        <div class="presupuesto-header fade-in">
+            <h3>Información del Cliente</h3>
+            <div class="cliente-info">
+                <div class="form-group">
+                    <label for="clienteSelect">Seleccionar Cliente *</label>
+                    <select id="clienteSelect" required>
+                        <option value="">Seleccionar cliente</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="clientes.html" class="btn btn-secondary">
+                        ➕ Agregar Cliente
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de productos -->
+        <div class="productos-section fade-in">
+            <div class="productos-header">
+                <h3>Productos del Presupuesto</h3>
+                <div class="total-section">
+                    <h4>Total: <span id="presupuestoTotal">$0.00</span></h4>
+                </div>
+            </div>
+
+            <!-- Formulario para agregar productos -->
+            <div class="producto-form">
+                <h4>Agregar Producto</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="productoSelect">Seleccionar Producto</label>
+                        <select id="productoSelect">
+                            <option value="">Seleccionar producto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidadProducto">Cantidad</label>
+                        <input type="number" id="cantidadProducto" min="1" placeholder="Cantidad">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: end;">
+                        <button type="button" class="btn btn-primary" onclick="addProductToBudget()">
+                            ➕ Agregar
+                        </button>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <a href="productos.html" class="btn btn-secondary btn-small">
+                        📦 Gestionar Productos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tabla de productos en el presupuesto -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Marca</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="presupuestoProductsBody">
+                        <!-- Los productos se cargan dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección de total y acciones -->
+        <div class="total-section fade-in">
+            <div style="text-align: center;">
+                <h3>Total del Presupuesto</h3>
+                <div class="total-amount" id="presupuestoTotalFinal">$0.00</div>
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-success" onclick="saveBudget()" style="margin-right: 15px;">
+                        💾 Guardar Presupuesto
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearBudget()">
+                        🗑️ Limpiar Todo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación rápida -->
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="productos.html" class="btn btn-secondary" style="margin-right: 10px;">
+                📦 Gestionar Productos
+            </a>
+            <a href="clientes.html" class="btn btn-secondary">
+                👥 Gestionar Clientes
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Función para limpiar el presupuesto
+        function clearBudget() {
+            if (confirm('¿Estás seguro de limpiar todo el presupuesto?')) {
+                currentBudgetProducts = [];
+                document.getElementById('clienteSelect').value = '';
+                renderBudgetProducts();
+                updateBudgetTotal();
+                showAlert('Presupuesto limpiado correctamente');
+            }
+        }
+
+        // Actualizar el total también en la sección final
+        function updateBudgetTotal() {
+            const total = budgetManager.calculateTotal(currentBudgetProducts);
+            const totalElement = document.getElementById('presupuestoTotal');
+            const totalFinalElement = document.getElementById('presupuestoTotalFinal');
+            
+            if (totalElement) {
+                totalElement.textContent = formatCurrency(total);
+            }
+            if (totalFinalElement) {
+                totalFinalElement.textContent = formatCurrency(total);
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Sistema de Presupuestos y Stock</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h2>👥 Gestión de Clientes</h2>
+            <a href="index.html" class="btn-home">🏠 Inicio</a>
+        </div>
+
+        <!-- Formulario para agregar clientes -->
+        <div class="form-container fade-in">
+            <h3>Agregar Nuevo Cliente</h3>
+            <form id="clientForm" onsubmit="event.preventDefault(); addClient();">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefono">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" name="direccion" placeholder="Dirección completa">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    ➕ Agregar Cliente
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista de clientes -->
+        <div class="table-container fade-in">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="clientesTableBody">
+                    <!-- Los clientes se cargan dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Navegación rápida -->
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="productos.html" class="btn btn-secondary" style="margin-right: 10px;">
+                📦 Gestionar Productos
+            </a>
+            <a href="presupuestos.html" class="btn btn-success">
+                📋 Crear Presupuesto
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
